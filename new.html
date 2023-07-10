@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test App</title>
+  <style>
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .question li {
+      margin-bottom: 10px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="container">
+      <div class="dataHeading">
+        <div class="heading_section">
+          <div class="head" id="date">Date: 10/02/2023</div>
+          <div class="head" id="sunject_name">Subject: JavaScript Exam</div>
+          <div class="head" id="time">Time: 9:00 to 10:00 am</div>
+        </div>
+        <div class="Username">
+          <label for="name" id="name">Name:</label>
+          <input type="text" id="U_name" placeholder="Enter the name" />
+        </div>
+        <div class="UserEnroll">
+          <label for="enroll" id="e_number">Enroll number:</label>
+          <input type="text" id="U_number" placeholder="Enter Your Enroll number" />
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="container">
+      <div class="question">
+        <ul>
+          <li type="1">JavaScript programmer</li>
+          <ul>
+            <li type="a">
+              <input type="radio" name="answer0" value="abc" id="answer0_0"> 
+            </li>
+            <li type="a">
+              <input type="radio" name="answer0" value="xyz" id="answer0_1"> 
+            </li>
+            <li type="a">
+              <input type="radio" name="answer0" value="uigig" id="answer0_2"> 
+            </li>
+          </ul>
+        </ul>
+      </div>
+    </div>
+
+    <button id="submitBtn">Submit</button>
+
+    <div id="resultTable"></div>
+
+  </div>
+
+  <script>
+    // Get the container element for the questions
+    const questionContainer = document.querySelector('.question');
+    const submitButton = document.getElementById('submitBtn');
+    const resultTable = document.getElementById('resultTable');
+
+    // Randomly generated questions and options
+    const questions = [{
+        question: 'Javascript is an _______ language?',
+        options: ['Object-Oriented', 'Object-based', 'Procedural'],
+        answer: 'Object-Oriented'
+      },
+      {
+        question: 'Which of the following keywords is used to define a variable in Javascript?',
+        options: ['var', 'let', 'Both of a & b'],
+        answer: 'Both of a & b'
+      },
+      {
+        question: 'Which of the following methods is used to access HTML elements using Javascript?',
+        options: ['Throw an error', 'ignor the sttatement', 'none of this'],
+        answer: 'ignor the sttatement'
+      },
+      {
+        question: 'How can a datatype be declared to be a constant type?',
+        options: ['var', 'let', 'const'],
+        answer: 'const'
+      }, {
+        question: 'What keyword is used to check whether a given property is valid or not?',
+        options: ['in','is in','lies'],
+        answer: 'in'
+      }
+
+    ];
+
+    // Array to store correct answers
+    const correctAnswers = [];
+
+    // Function to generate the exam paper
+    function generateExamPaper() {
+      // Clear previous questions
+      questionContainer.innerHTML = '';
+
+      // Randomly select 10 questions
+      const randomQuestions = getRandomElements(questions, 5);
+
+      // Generate HTML for each question
+      randomQuestions.forEach((question, index) => {
+        const questionHTML = `
+          <li type="1">${question.question}</li>
+          <ul>
+            ${question.options.map((option, optionIndex) => `
+              <li type="a">
+                <input type="radio" name="answer${index}" value="${option}" id="answer${index}_${optionIndex}">
+                ${option}
+              </li>
+            `).join('')}
+          </ul>
+        `;
+        questionContainer.innerHTML += questionHTML;
+
+        // Store the correct answer for the question
+        correctAnswers[index] = question.answer;
+      });
+    }
+
+    // Function to get a specified number of random elements from an array
+    function getRandomElements(array, num) {
+      const shuffled = array.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    }
+
+    // Event listener for submit button
+    submitButton.addEventListener('click', () => {
+      displayResults();
+    });
+
+    // Function to display the results
+    function displayResults() {
+      const selectedAnswers = [];
+      const table = document.createElement('table');
+      const tbody = document.createElement('tbody');
+
+      // Loop through the selected answers in local storage
+      for (let i = 0; i < correctAnswers.length; i++) {
+        const selectedAnswer = localStorage.getItem(`answer${i}`);
+        selectedAnswers[i] = selectedAnswer;
+
+        const row = document.createElement('tr');
+        const questionCell = document.createElement('td');
+        const selectedAnswerCell = document.createElement('td');
+        const correctnessCell = document.createElement('td');
+
+        questionCell.textContent = `Question ${i + 1}`;
+        selectedAnswerCell.textContent = selectedAnswer || 'Not answered';
+        correctnessCell.textContent = selectedAnswer === correctAnswers[i] ? 'Correct' : 'Incorrect';
+
+        row.appendChild(questionCell);
+        row.appendChild(selectedAnswerCell);
+        row.appendChild(correctnessCell);
+
+        tbody.appendChild(row);
+      }
+
+      table.appendChild(tbody);
+
+      // Append the table to the resultTable div
+      resultTable.innerHTML = '';
+      resultTable.appendChild(table);
+    }
+
+    // Generate the exam paper
+    generateExamPaper();
+  </script>
+</body>
+
+</html>
